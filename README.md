@@ -1,4 +1,4 @@
-# nvidia-smi-monitor
+# Nvidia GPU Monitor
 
 Single-line GPU monitor for Windows console. Polls `nvidia-smi` every 2 seconds and refreshes one line in place.
 
