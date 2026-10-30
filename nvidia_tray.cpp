@@ -1,5 +1,20 @@
 // nvidia_tray.cpp - Single-line GPU monitor for Windows console
 //
+// Copyright (C) 2026 zero-fret
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 // Build (MinGW): g++ -O2 nvidia_tray.cpp -o nvidia_tray.exe -luser32 -lshell32
 // Build (MSVC):  cl /O2 nvidia_tray.cpp /link user32.lib shell32.lib
 //
@@ -81,6 +96,7 @@ static GpuInfo QueryGpu() {
 
 int main() {
     const DWORD intervalMs = 2000;
+    int lastLen = 0;
     while (true) {
         GpuInfo info = QueryGpu();
         char line[256];
@@ -99,9 +115,14 @@ int main() {
         } else {
             snprintf(line, sizeof(line), "nvidia-smi not found");
         }
-        // \r returns to line start; fixed width pads out leftover chars.
-        printf("\r%-200s", line);
+        // \r back to line start; pad with spaces to erase leftover chars
+        int curLen = (int)strlen(line);
+        printf("\r%s", line);
+        if (curLen < lastLen) {
+            printf("%*s", lastLen - curLen, "");
+        }
         fflush(stdout);
+        lastLen = curLen;
         Sleep(intervalMs);
     }
     return 0;
